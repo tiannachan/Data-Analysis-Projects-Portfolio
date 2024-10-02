@@ -47,3 +47,11 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+Project 1/aqi.R
+Project 1/aqi_values.csv
+Project 1/course_record.csv
+Project 1/Marathon Data Codesheet.docx
+Project 1/Marathon Data Talk Brown University.pptx
+Project 1/marathon_dates.csv
+Project 1/project1.csv
+.DS_Store
