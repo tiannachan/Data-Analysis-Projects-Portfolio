@@ -38,6 +38,12 @@ library(DataExplorer)
 library(lubridate) #To convert time
 ```
 
+This is about ...
+
+data sets contain...
+
+## Data Preprocessing
+
 ```{r}
 # Import data sets
 aqi_values <- read_csv("aqi_values.csv")
@@ -48,9 +54,9 @@ project1 <- read_csv("project1.csv")
 colnames(project1) <- c("Race", "Year", "Sex", "Flag", "Age", "%CR", "Td", "Tw", "%rh", "Tg", "SR", "DP", "Wind", "WBGT")
 ```
 
-## Missing Data
+### Missing Data
 
-To understand the data set, I first generated a missing data plot by `vis_miss()`. The plot shows that there was a consistent 4% of missing data for the flag and weather measurement columns. This indicates that weather was not measured at these races. After some further exploration, table below shows that all data were missing at races 1 (Chicago), 2 (NYC), 3 (Twin Cities) at 2011, and race 4 (Grandma’s) at 2012.
+[Project 1 Data:]{.underline} To understand the data set, I first generated a missing data plot by `vis_miss()`. The plot shows that there was a consistent 4% of missing data for the flag and weather measurement columns. This indicates that weather was not measured at these races. After some further exploration, table below shows that all data were missing at races 1 (Chicago), 2 (NYC), 3 (Twin Cities) at 2011, and race 4 (Grandma’s) at 2012.
 
 The flag for these were missing because they should have been calculated by the wet bulb globe temperature (WBGT), and the WBGT is also calculated by the other temperature variables, which were not measured and is dependent on these particular races in particular year. Therefore, the probability of the flag and WBGT being missing depends on both observed and unobserved variables, this should then be a case of **Missing Not at Random (MNAR).** For the other weather variables, they were missing because they are not measured in that particular year/race, but we do not have knowledge on the exact reason. Therefore, the probability of them being missing depends only on observed variables (year/race), they would then be a case of **Missing at Random (MAR).**
 
@@ -63,13 +69,32 @@ project1 %>% group_by(Race, Year) %>%
   summarize(n_miss = sum(is.na(Flag)),
             n_tot = n()) %>%
   filter(n_miss > 0) %>%
-  kable(booktabs = TRUE, digits = 2)
+  kable(digits = 2)
   
 ```
 
-## Data Quality
+[AQI Values Data:]{.underline} Based on the same missing graph plotted, the api column has 16% missing values. Upon further analysis, it was found that all data with sample duration = 1 hour has the api column missing. This is then **Missing At** **Random (MAR).**
 
-Using `str()`, the variable type for each columns in the data set is shown. The race column was numeric, with values 0, 1, 2, 3, 4. Recoding them into B, C, NY, TC, D would help ease the process of understanding the data and merging with the course record data later. It is further factorized. Similar process for sex, recoding to "M" and "F". Additonally, the Sex and Flag were originally numeric and character variables, and they are also factorized to make sure future analysis treat them the way we want. For the others, they are in the correct numeric value type.
+```{r}
+## AQI Values Data
+# vis_miss(aqi_values)
+aqi_values %>% select(c(sample_duration, aqi)) %>%
+  group_by(sample_duration) %>%
+  summarise(n_miss = sum(is.na(aqi)),
+            n_tot = n()) %>%
+  kable(digits = 2)
+```
+
+[Course Record Data:]{.underline} No missingness was found in the data.
+
+```{r}
+## Course Record Data
+# vis_miss(course_record)
+```
+
+### Data Quality
+
+[Project 1 Data:]{.underline} Using `str()`, the variable type for each columns in the data set is shown. The race column was numeric, with values 0, 1, 2, 3, 4. Recoding them into B, C, NY, TC, D would help ease the process of understanding the data and merging with the course record data later. It is further factorized. Similar process for sex, recoding to "M" and "F". Additonally, the Sex and Flag were originally numeric and character variables, and they are also factorized to make sure future analysis treat them the way we want. For the others, they are in the correct numeric value type.
 
 ```{r}
 ## Data Quality
@@ -97,20 +122,95 @@ plot_histogram(project1, nrow = 5L)
 # plot_bar(project1, ncol = 5L)
 ```
 
-## Participant And Race Characteristics
+[AQI Values Data:]{.underline}
 
 ```{r}
-project1 %>% dplyr::select(Race, Age, Sex, Flag)%>%
-  tbl_summary(by = Sex, 
-              type = list(where(is.numeric) ~ "continuous"),
-              statistic = list(all_continuous() ~ "{mean} ({p25}, {p75})")) %>% 
-  bold_labels()
-  #add_p()
+aqi_values %>% 
+  group_by(parameter_code, units_of_measure, sample_duration) %>% 
+  summarise(n=n()) %>% 
+  kable()
+
+# Chnange marathon names and add year column
+aqi_values_adj <- aqi_values %>%
+  mutate(
+    marathon = case_when(
+      marathon == "Boston" ~ "B",
+      marathon == "Chicago" ~ "C",
+      marathon == "NYC" ~ "NY",
+      marathon == "Twin Cities" ~ "TC",
+      marathon == "Grandmas" ~ "D"
+      ),
+    year = year(date_local)
+    )
 ```
 
-## Merging Data
+The 88101 monitors include both manually operated Federal Reference Methods (FRMs) and automated Federal Equivalent Methods (FEMs) and each are used for determining compliance with the PM2.5 standards. The 88502 monitors are “FRM-like” but are not used for regulatory purposes. Both 88101 and 88502 monitors are used for reporting daily Air Quality Index values. (EPA)
 
-The course record data is merged so we can use the record to calculate time by each participant.
+Take 88101 24-hr block avg, more data.
+
+below 12 μg/m^3^ healthy with little to no risk from exposure. above 35 μg/m^3^ unhealthy
+
+44201 take 8-HR RUN AVG BEGIN HOUR
+
+\(44201\) The concentration of ozone at ground level is typically 0.001–0.025 ppm, but can increase to 0.1–0.15 ppm during a strong thunderstorm
+
+The standard is currently set at **0.070 parts per million averaged over 8 hours**. (New York State Department of Health)
+
+```{r}
+aqi_values_adj <- aqi_values_adj %>% 
+  filter(parameter_code %in% c(88101, 44201)) %>%
+  select(-c("cbsa_code","state_code","county_code","site_number","date_local"))
+```
+
+Describe how to get the summary
+
+```{r}
+aqi_summary_by_year <- aqi_values_adj %>% 
+  group_by(year, marathon, units_of_measure) %>% 
+  summarise(avg_arithmetic_mean=mean(arithmetic_mean)) 
+
+aqi_summary_by_year <- 
+  spread(aqi_summary_by_year, units_of_measure, avg_arithmetic_mean) %>%
+  arrange(year)
+
+colnames(aqi_summary_by_year) <- c("Year", "Race", "PM2.5", "Ozone")
+```
+
+The graph below illustrates the change in ozone levels on race day, over the years, segmented by marathon locations. Each facet represents a marathon location, allowing for a comparison of trends within those areas. The points represents the average ozone measurements, and we see different fluctuations between different locations. The curve was plotted using `geom_smooth` and shows the trend. In particular, the average ozone levels at New York City was the most stable throughout years; At Twin City we see the greatest decrease; The other locations have a slight fluctuations only.
+
+```{r}
+ggplot(aqi_summary_by_year, aes(x = Year, y = Ozone, color = Race)) +
+  geom_point() + 
+  geom_smooth() +
+  facet_wrap(~ Race) +
+  labs(title = "Average Ozone Levels On Race Day, Over the Years",
+       x = "Year",
+       y = "Ozone Levels") +
+  theme_minimal() + 
+  scale_color_discrete(name = "Location") +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank()) 
+```
+
+Using the same method, the second graph shows the trend on PM2.5. add more!
+
+```{r}
+ggplot(aqi_summary_by_year, aes(x = Year, y = `PM2.5`, color = Race)) +
+  geom_point() + 
+  geom_smooth() +
+  facet_wrap(~ Race) +
+  labs(title = "Average PM2.5 On Race Day, Over the Years",
+       x = "Year",
+       y = "PM2.5") +
+  theme_minimal() + 
+  scale_color_discrete(name = "Location") +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank())
+```
+
+### Merging Data
+
+The course record data is merged using a `left_join()` so we can use the record to calculate a new variable `Time` for each participant. Since course record has a `Gender` column instead of `Sex`, I have renamed that so I can left join project 1 data to course record data by `Race`, `Year`, and `Sex`. To calculate the time, I used $\text{Time (hours)} = \frac{\text{CR} \times \left(1 + \frac{\%CR}{100}\right)}{3600}$ so to adjust for the percent off course record and convert the final unit to hours.
 
 ```{r}
 course_record <- course_record %>% rename("Sex" = "Gender")
@@ -118,22 +218,148 @@ course_record <- course_record %>% rename("Sex" = "Gender")
 project1_CR <- project1 %>% 
   left_join(course_record, by = c("Race", "Year", "Sex"))
 
-project1_CR$Time <- (project1_CR$CR * (1+project1_CR$`%CR`/100)) %>% 
-  as.numeric() %>% seconds_to_period()
+project1_CR$Time <- (project1_CR$CR * (1+project1_CR$`%CR`/100))/3600 %>% 
+  as.numeric()
 ```
 
--   AIM 1: Examine effects of increasing age on marathon performance in men and women
+Describe joining air quality data
 
 ```{r}
-ggplot(project1_CR, aes(x = Age, y = Time)) +
-  geom_point(aes(color=Sex)) +  # Scatter plot
-  #facet_wrap(~ Sex) +  # Facet by Sex
-  labs(title = "Time vs Age Faceted by Sex",
+project1_CR_aqi <- project1_CR %>%
+  left_join(aqi_summary_by_year, by = c("Race", "Year"))
+```
+
+## AIM 1: Examine effects of increasing age on marathon performance in men and women
+
+The image below shows a scatter plot of time and age for men and women. The plot is divided into two panels, by sex, and the blue line represent a fitted curve performed directly by `geom_smooth()`. There seem to be a near-identical trend for men and women- both sexes gets an increasingly faster time each year they are closer to around age 25. However, as they reach the fastest time at around age 25, they gradually run slower as age increases further. We can observe a spike happening around age 60 for both sexes, but men has a steeper slope. In other words, the slower in time was more significant in the male group. On the other hand, we can see the curve for women is slightly higher than that of the men. This means that women are running slightly slower in general.
+
+```{r}
+ggplot(project1_CR_aqi, aes(x = Age, y = Time)) +
+  geom_point(aes(color=Sex), size = 0.5) +  # Points
+  geom_smooth() + # Add a smooth trend line
+  facet_wrap(~ Sex) +  # Facet by Sex
+  labs(title = "Time vs Age by Sex",
        x = "Age",
-       y = "Time (Seconds)") +
+       y = "Time (Hours)") +
   theme_minimal()
 ```
 
--   AIM 2: Explore the impact of environmental conditions on marathon performance, and whether the impact differs across age and gender.
+This table shows the summary statistics for age and course time for men and women. It is obvious that men (N = 6,112) had a larger sample size than women (N = 5,452). This could lead to potential biases because of different sample size. In average, the men population is also older than the female population. We again see that men have a shorter course time on average.
 
--   AIM3: Identify the weather parameters (WBGT, Flag conditions, temperature, etc) that have the largest impact on marathon performance.
+```{r}
+project1_CR_aqi %>% dplyr::select(Age, Sex, Time)%>%
+  tbl_summary(by = Sex, 
+              type = list(where(is.numeric) ~ "continuous"),
+              statistic = list(all_continuous() ~ "{mean} ({p25}, {p75})")) %>% 
+  bold_labels()
+  #add_p()
+```
+
+A regression model was fit to quantify the course time between sex and their ages. Based on the results below (rounded to 3 decimal places), both Age and Sex are significantly influential on time (p-value \< 0.05), with age positively associated while sex negatively associated.
+
+$$
+\begin{aligned}
+E[\text{Time}] &= \beta_0 + \beta_1 \cdot \text{Age} + \beta_2 \cdot \text{SexM} 
+\end{aligned}
+$$
+
+```{r}
+## Time effects on Sex and Age
+model <- lm(as.numeric(Time) ~ Age + Sex, data = project1_CR_aqi)
+summary <- summary(model)
+
+# Presenting results in table format
+coefficients <- as.data.frame(summary$coefficients)
+
+kable(coefficients, digits = 3,
+      caption = "Linear Regression Model Summary",
+      col.names = c("Variable", "Estimate", "Std. Error", "t value", "Significance"))
+```
+
+Therefore, for each unit increase in Age, the expected Time increases by $\beta_1 = 0.039$ hours, holding all other variables constant. For **Male** (SexM = 1), the expected Time decreases by $\beta_2 =-0.491$ hours compared to females, holding all other variables constant.
+
+## AIM 2: Explore the impact of environmental conditions on marathon performance, and whether the impact differs across age and gender.
+
+Most races had pm2.5 under 13 .just by looking at the graph, it does not immediately appear that there is a big difference in performance comparing different pm2.5 levels. The slope drawn by `geom_smooth(method = "lm")` is close to constant, but we do see a tiny increase as time goes up. This suggests that as pm2.5 level goes up, the course time goes up (running slower).
+
+```{r}
+ggplot(project1_CR_aqi, aes(x = Time, y = PM2.5)) +
+  geom_point(aes(color = Race), size = 0.5) + 
+  geom_smooth(method = "lm") +   
+  labs(title = "Relationship Between PM2.5 and Marathon Times",
+       x = "Course Time (Hours)",
+       y = "PM2.5") +
+  theme_minimal()
+```
+
+Repeating the same process for Ozone measurements, it is also difficult to tell whether there are differences in distribution at different ozone level. However, the slope does show an obvious decreasing trend. This is strange because it suggests that lower ozone may be associated with a longer course tine.
+
+```{r}
+ggplot(project1_CR_aqi, aes(x = Time, y = Ozone)) +
+  geom_point(aes(color = Race), size = 0.5) + 
+  geom_smooth(method = "lm") +   
+  labs(title = "Relationship Between Ozone and Marathon Times",
+       x = "Course Time (Hours)",
+       y = "Ozone") +
+  theme_minimal()
+```
+
+## AIM 3: Identify the weather parameters (WBGT, Flag conditions, temperature, etc) that have the largest impact on marathon performance.
+
+### Flag and Course Time
+
+```{r}
+# ggplot(project1_CR_aqi$Time, col = project1_CR_aqi$Flag)
+```
+
+I started with the full model, of all variables in the dataset. Then, I used backward selection to find the smallest best model. This method drops one variable each time and test for the significance. Table below shows the coefficients of the final model by backward selection. $$
+\begin{aligned}
+E[\text{Time}] &= \beta_0 + \beta_1 \cdot \text{Age} + \beta_2 \cdot \text{SexM} + \beta_3 \cdot \text{FlagRed} + \beta_4 \cdot \text{FlagWhite} + \beta_5 \cdot \text{FlagYellow} 
+\\&+ \beta_6\cdot \text{Td} + \beta_7 \cdot \text{Tw} + \beta_8 \cdot \% \text{rh} + \beta_9 \cdot \text{SR} + \beta_{10} \cdot \text{DP} 
+\end{aligned}
+$$
+
+```{r}
+#| output: false
+
+## Backward selection models
+
+# Full model
+model <- lm(as.numeric(Time) ~ Age + Sex + Flag + Td + Tw + `%rh` + Tg + SR + DP + Wind + WBGT, data = project1_CR_aqi)
+# summary(model)
+
+# Backward selection model
+final_model <- step(model, direction = "backward")
+summary <- summary(final_model) 
+
+# Presenting results in table format
+coefficients <- as.data.frame(summary$coefficients)
+```
+
+```{r}
+
+kable(coefficients, digits = 3,
+      caption = "Linear Regression Model Summary: Backward Selection",
+      col.names = c("Variable", "Estimate", "Std. Error", "t value", "Significance"))
+
+```
+
+Therefore,
+
+For **Female** (SexM = 0), each unit increase in time (hour)
+
+$$
+\begin{aligned}
+E[{Time}] &= \beta_0 + \beta_1 \cdot \text{Age} + \beta_2 \cdot \text{SexM} + \beta_3 \cdot \text{Flag} + \beta_4 \cdot \text{Td} + \beta_5 \cdot \text{Tw} 
+\\&+ \beta_6 \cdot \% \text{rh} + \beta_7 \cdot \text{Tg} + \beta_8 \cdot \text{SR} + \beta_9 \cdot \text{DP} + \beta_{10} \cdot \text{Wind} + \beta_{11} \cdot \text{WBGT}
+\end{aligned}
+$$
+
+## 
+
+\newpage
+
+# Code Appendix
+
+```{r ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
+```
