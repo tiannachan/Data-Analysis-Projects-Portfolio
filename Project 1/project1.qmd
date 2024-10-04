@@ -151,7 +151,7 @@ aqi_values_adj <- aqi_values %>%
 
 According to the US Environmental Protection Agency, 88101 and 88502 are both used to report daily Air Quality Index values. The difference is that 88101 include both manually operated Federal Reference Methods (FRMs) and automated Federal Equivalent Methods (FEMs), but 88502 are "FRM-like" @EPA. Based on this information, I decide to only take the 88101 data for simplicity. PM2.5 below 12 μg/m^3^ is considered healthy with little to no risk from exposure, while anything above 35 μg/m^3^ is unhealthy @IndoorAirHygieneInstitute.
 
-For ozone, it is measured under the parameter 44201. The quality standard is 0.08 ppm @EPA, anything above could be unhealthy. To clean the data, I created a summary by taking the average of the arithmetic mean.
+For ozone, it is measured under the parameter 44201. The quality standard is 0.08 ppm @EPA, anything above could be unhealthy. To clean the data, I created a summary by taking the average of the arithmetic mean. However, note that the summary table is not a complete data - it contains missing values for PM2.5 values from most of the early years and a few in latter years. It is possible that the PM2.5 values were not collected until later years.
 
 ```{r}
 aqi_values_adj <- aqi_values_adj %>% 
@@ -162,7 +162,7 @@ aqi_values_adj <- aqi_values_adj %>%
 ```{r}
 aqi_summary_by_year <- aqi_values_adj %>% 
   group_by(year, marathon, units_of_measure) %>% 
-  summarise(avg_arithmetic_mean=mean(arithmetic_mean)) 
+  summarise(avg_arithmetic_mean=mean(arithmetic_mean, na.rm = TRUE)) 
 
 aqi_summary_by_year <- 
   spread(aqi_summary_by_year, units_of_measure, avg_arithmetic_mean) %>%
@@ -241,7 +241,7 @@ corrplot(M, method = 'color', tl.cex = 0.8)
 
 The image below shows a scatter plot of time and age for men and women. The plot is divided into two panels, by sex, and the blue line represent a fitted curve performed directly by `geom_smooth()`. There seem to be a near-identical trend for men and women- both sexes gets an increasingly faster time each year they are closer to around age 25. However, as they reach the fastest time at around age 25, they gradually run slower as age increases further. We can observe a spike happening around age 60 for both sexes, but men has a steeper slope. In other words, the slower in time was more significant in the male group. On the other hand, we can see the curve for women is slightly higher than that of the men. This means that women are running slightly slower in general.
 
-```{r, fig.height=4.5}
+```{r}
 ggplot(project1_CR_aqi, aes(x = Age, y = Time)) +
   geom_point(aes(color=Sex), size = 0.5) +
   geom_smooth() + 
@@ -267,13 +267,14 @@ project1_CR_aqi %>% dplyr::select(Age, Sex, Time)%>%
 
 ### Regression
 
-A regression model was fit to quantify the course time between sex and their ages. Based on the results below (rounded to 3 decimal places), both Age and Sex are significantly influential on time (p-value \< 0.05), with age positively associated while sex negatively associated.
-
+A regression model was fit to quantify the course time between sex and their ages.\
 $$
 \begin{aligned}
 E[\text{Time}] &= \beta_0 + \beta_1 \cdot \text{Age} + \beta_2 \cdot \text{SexM} 
 \end{aligned}
 $$
+
+Based on the results below (rounded to 3 decimal places), both Age and Sex are significantly influential on time (p-value \< 0.05), with age positively associated while sex negatively associated.
 
 ```{r}
 ## Time effects on Sex and Age
@@ -294,7 +295,7 @@ Therefore, for each unit increase in Age, the expected Time increases by $\beta_
 
 ### Plots
 
-Most races had pm2.5 on the lower end, under 13. Just by looking at the graph, it does not immediately appear that there is a big difference in performance comparing different pm2.5 levels. The slope drawn by `geom_smooth()` has a tiny increase as average time increases. This suggests that as pm2.5 level goes up, the average course time goes up. In other words, they are running slower on average.
+First, I looked at the aggregated data by calculating the average course time for each race/year. Most races had PM2.5 on the lower end, about under 13. Just by looking at the graph, it does not immediately appear that there is a big difference in performance comparing different PM2.5 levels. The slope drawn by `geom_smooth()` slowly increase as average time increases. This suggests that as PM2.5 level goes up, the average course time goes up. In other words, they are running slower on average.
 
 ```{r}
 new_data <- project1_CR_aqi %>% group_by(Race, Year, PM2.5, Ozone) %>% summarize(Avg_Time = mean(as.numeric(Time)))
@@ -302,7 +303,7 @@ new_data <- project1_CR_aqi %>% group_by(Race, Year, PM2.5, Ozone) %>% summarize
 a <- ggplot(new_data, aes(x = Avg_Time, y = PM2.5)) +
   geom_point(aes(color = Race)) + 
   geom_smooth(method = "lm") +   
-  labs(title = "Average PM2.5/Ozone vs. Average Course Time",
+  labs(title = "Average PM2.5/ Ozone vs. Average Course Time, by Race",
        x = "Average Time (Hours)",
        y = "Average PM2.5") +
   theme_minimal() +
@@ -311,9 +312,9 @@ a <- ggplot(new_data, aes(x = Avg_Time, y = PM2.5)) +
   guides(color="none")
 ```
 
-Repeating the same process for Ozone measurements. The slope plotted with `geom_smooth` shows a decreasing trend. This is strange because it suggests that lower ozone may be associated with a longer course time. In other words, runners tends to finish the race faster when the ozone level is higher. However, it is also noticeable from both graphs that the Boston Marathon has a lower average course time among all other marathon races.
+Same process for Ozone measurements, the slope plotted with `geom_smooth` shows a decreasing trend. This is strange because it suggests that lower ozone may be associated with a longer course time. In other words, runners tends to finish the race faster when the ozone level is higher. However, it is also noticeable from both graphs that the Boston Marathon has a lower average course time among all other marathon races, and their ozone measurements seems slightly above average.
 
-```{r}
+```{r, fig.height=3}
 b <- ggplot(new_data, aes(x = Avg_Time, y = Ozone)) +
   geom_point(aes(color = Race)) + 
   geom_smooth(method = "lm") +   
@@ -326,13 +327,37 @@ b <- ggplot(new_data, aes(x = Avg_Time, y = Ozone)) +
 a + b
 ```
 
+In order to see the differences between sex, I will create another aggregate that is by sex. There is a clear distinction between male and female - again, male has a shorter average time than female in overall.
+
+```{r, fig.height=3}
+new_data <- project1_CR_aqi %>% group_by(Race, Year, Sex, PM2.5, Ozone) %>% summarize(Avg_Time = mean(as.numeric(Time)))
+
+a <- ggplot(new_data, aes(x = Avg_Time, y = PM2.5)) +
+  geom_point(aes(color = Sex)) + 
+  geom_smooth(method = "lm") +   
+  labs(title = "Average PM2.5/ Ozone vs. Average Course Time, by Sex",
+       x = "Average Time (Hours)",
+       y = "Average PM2.5") +
+  theme_minimal() +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank()) +
+  guides(color="none")
+
+b <- ggplot(new_data, aes(x = Avg_Time, y = Ozone)) +
+  geom_point(aes(color = Sex)) + 
+  geom_smooth(method = "lm") +   
+  labs(x = "Average Time (Hours)",
+       y = "Average Ozone") +
+  theme_minimal() +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank())
+
+a + b
+```
+
 ### Regression
 
-To quantify the impact of environmental conditions on marathon performance, I will first focus on a regression model with only PM2.5 and Ozone: $E[\text{Time}] = \beta_0 + \beta_1 \text{PM2.5} + \beta_2 \text{Ozone}$. Since both PM2.5 and Ozone are significant, both of them were able to explain course time.
-
-$\beta_1 = 0.004$ means that for every one unit increase in PM2.5, the course time increase by 0.004 hours (14.4 seconds), holding others constant.
-
-$\beta_2 = -5.630$ means that for every one unit increase in Ozone, the course time decrease by -5.630 hours. Thus, by conversion, for every 0.01 unit increase in Ozone, the course time decrease by -0.0563 hours (3.378 minutes).
+To quantify the impact of environmental conditions on marathon performance, I will first focus on a regression model with only PM2.5 and Ozone: $E[\text{Time}] = \beta_0 + \beta_1 \text{PM2.5} + \beta_2 \text{Ozone}$.
 
 ```{r}
 model <- lm(Time ~ PM2.5 + Ozone, data = project1_CR_aqi)
@@ -345,25 +370,17 @@ kable(coefficients, digits = 3,
       col.names = c("Variable", "Estimate", "Std. Error", "t value", "Significance"))
 ```
 
+Since both PM2.5 and Ozone are significant, both of them were able to explain course time.
+
+$\beta_1 = 0.004$ means that for every one unit increase in PM2.5, the course time increase by 0.004 hours (14.4 seconds), holding others constant.
+
+$\beta_2 = -5.630$ means that for every one unit increase in Ozone, the course time decrease by -5.630 hours. Thus, by conversion, for every 0.01 unit increase in Ozone, the course time decrease by -0.0563 hours (3.378 minutes).
+
 To find out whether the impact differs across age and gender, we start with adding the main effects of age and gender, along with the two-way interactions of them with each environmental measure. Then, we perform a backward selection and the results are as follows.
 
-The full model:
+The full model: $E[\text{Time}] = \beta_0 + \beta_1 \text{Age} + \beta_2 \text{SexM} + \beta_3 \text{PM2.5} + \beta_4 \text{Ozone}+ \beta_5 (\text{Age} \times \text{PM2.5}) + \beta_6 (\text{Age} \times \text{Ozone}) + \beta_7 (\text{SexM} \times \text{PM2.5}) + \beta_8 (\text{SexM} \times \text{Ozone})$
 
-$$
-\begin{aligned}
-E[\text{Time}] &= \beta_0 + \beta_1 \text{Age} + \beta_2 \text{SexM} + \beta_3 \text{PM2.5} + \beta_4 \text{Ozone} \\&
-+ \beta_5 (\text{Age} \times \text{PM2.5}) + \beta_6 (\text{Age} \times \text{Ozone}) + \beta_7 (\text{SexM} \times \text{PM2.5}) + \beta_8 (\text{SexM} \times \text{Ozone})
-\end{aligned}
-$$
-
-Final model by backward selection:
-
-$$
-\begin{aligned}
-E[\text{Time}] &= \beta_0 + \beta_1 \text{Age} + \beta_2 \text{SexM} + \beta_3 \text{PM2.5} + \beta_4 \text{Ozone} \\&
-+ \beta_5 (\text{Age} \times \text{PM2.5}) + \beta_6 (\text{Age} \times \text{Ozone}) + \beta_7 (\text{SexM} \times \text{PM2.5})
-\end{aligned}
-$$
+Final model by backward selection: $E[\text{Time}] = \beta_0 + \beta_1 \text{Age} + \beta_2 \text{SexM} + \beta_3 \text{PM2.5} + \beta_4 \text{Ozone}+ \beta_5 (\text{Age} \times \text{PM2.5}) + \beta_6 (\text{Age} \times \text{Ozone}) + \beta_7 (\text{SexM} \times \text{PM2.5})$
 
 ```{r}
 #| output: false
@@ -380,21 +397,46 @@ summary <- summary(backward_model)
 coefficients <- as.data.frame(summary$coefficients)
 ```
 
-Since the interaction term for Sex \* Ozone was removed, this suggests that the relationship between Ozone and Time does not differ significantly between males and females in the data set. The summary table below is rounded to 4 decimal places,
-
 ```{r}
 kable(coefficients, digits = 4,
       caption = "Linear Regression Model Summary",
       col.names = c("Variable", "Estimate", "Std. Error", "t value", "Significance"))
 ```
 
+Since the interaction term for Sex \* Ozone was removed, this suggests that the relationship between Ozone and Time does not differ significantly between males and females in the data set. The interaction term for Sex \* PM2.5 was not removed by backward selection, but it remains insignificant (p = 0.078). We cannot conclude that the impact of PM2.5 on course time changes as Sex group changes.
+
+Since the others are significant, this means that the impact of PM2.5 and ozone on course time changes as Age increases. In overall, the impact for these environmental factors are seemingly more significant to age differences, but not that much for different sexes.
+
+```{}
+```
+
 ## AIM 3: Identify the weather parameters (WBGT, Flag conditions, temperature, etc) that have the largest impact on marathon performance.
+
+### Plots
 
 ### Flag and Course Time
 
 ```{r}
-# ggplot(project1_CR_aqi$Time, col = project1_CR_aqi$Flag)
+new_data <- project1_CR_aqi %>% group_by(Race, Year, WBGT, Flag) %>% summarize(Avg_Time = mean(as.numeric(Time))) %>% na.omit()
+
+ggplot(new_data, aes(x = Avg_Time, y = WBGT)) +
+  geom_point(aes(color = Flag), alpha = 0.5) + 
+  geom_smooth(method = "loess", se = FALSE, color = "black") + 
+  labs(title = "Impact of WBGT on Marathon Performance",
+       x = "Average Course Time",
+       y = "WBGT",
+       color = "Flag") +
+  scale_color_manual(values = c("Green" = "green", 
+                                  "Red" = "red", 
+                                  "White" = "grey", 
+                                  "Yellow" = "yellow"
+                                )) + 
+  theme_minimal()
+
+
 ```
+
+### Regression
 
 I started with the full model, of all variables in the dataset. Then, I used backward selection to find the smallest best model. This method drops one variable each time and test for the significance. Table below shows the coefficients of the final model by backward selection. $$
 \begin{aligned}
