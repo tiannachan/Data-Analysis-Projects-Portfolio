@@ -30,18 +30,18 @@ library(knitr)
 library(tidyr)   
 library(dplyr)    
 library(kableExtra)
-library(readr)
 library(visdat)
-library(naniar)
+# library(naniar)
 library(gtsummary)
 library(patchwork)
 library(DataExplorer)
-library(lubridate) #To convert time
 ```
+
+## Introduction
 
 This project aims to explore different factors that impact marathon performance between gender and across age.
 
-The `project1` data set contains info and results for each participant in the marathon races at Boston, New York City, Chicago, Twin Cities, and Grandmas from 1993 to 2016. It also includes weather parameters, such as dry and wet bulb temperature, relative humidity, black globe temperature and more. This results data already includes calculated variables `WBGT` (Wet Bulb Globe Temperature, calculated by the three temperature) and `Flag` (Groups for WBGT). The project also utilized the `course_record` data that included the record for each race, at each year.
+The `project1` data set contains info and results for each participant (14-85 years) in the marathon races at Boston, New York City, Chicago, Twin Cities, and Grandmas from 1993 to 2016. It also includes weather parameters, such as dry and wet bulb temperature, relative humidity, black globe temperature and more. This results data already includes calculated variables `WBGT` (Wet Bulb Globe Temperature, calculated by the three temperature) and `Flag` (Groups for WBGT). The project also utilized the `course_record` data that included the record for each race, at each year.
 
 To further assess the environmental impact, AQI data was obtained using provided code in class, which grabbed data from an API using the R package RAQSAPI. The resulted data set includes the average values for ozone level in parts per million, and the PM2.5 in Micrograms/cubic meter (LC).
 
@@ -521,13 +521,13 @@ The dry bulb temperature (Td) and humidity (%rh) were marginally significant, so
 
 The wet bulb temperature (Tw) is significant (p-value= 0.003), so the estimate 0.059 suggests that higher Tw lead to longer course time, which means worse performance.
 
-Solar Ration (SR) has an extremly small p-value, so the table rounded to 4 decimal places did not show the full value. The estimate -0.0002 indicates a significant negative association with average time that higher solar radiation leads to shorter time. This effect is very significant but the effect is small because of the small estimate.
+Solar Radiation (SR) has an extremely small p-value, so the table rounded to 4 decimal places did not show the full value. The estimate -0.0002 indicates a significant negative association with average time that higher solar radiation leads to shorter time. This effect is very significant but the effect is small because of the small estimate.
 
 Lastly, Dew Point (DP) is significant (p-value= 0.0019), so the estimate of -0.028 indicates that higher dew points are associated with lower time, meaning better performance.
 
-To summarize, wet bulb temperature (Tw) and Flag Conditions (especially Red) have the largest positive impacts on time (i.e., largest negative impacts on performace). This means the hotter and more humid condition are associated with worse performance.
+To summarize, wet bulb temperature (Tw) and Flag Conditions (especially Red) have the largest positive impacts on time (i.e., largest negative impacts on performance). This means the hotter and more humid condition are associated with worse performance.
 
-On the other hand, Dew Point (DP) has negative impact on time (i.e., positive impact on performace), so higher dew point could be a favorable condition for better performance.
+On the other hand, Dew Point (DP) has negative impact on time (i.e., positive impact on performance), so higher dew point could be a favorable condition for better performance.
 
 \newpage
 
