@@ -1,5 +1,7 @@
 # Exploring the Impact of Environment and Weather Conditions on Marathon Performance
 
+[Report PDF](/project1.pdf).
+
 ## Background
 
 Previous studies have shown negative associations on endurance exercise performance and environmental temperature[1], which magnify during long distance events if temperature is warm [2]. It was also shown that the older population are less able to dissipate heat [3], and there are also sex differences [4].
@@ -20,7 +22,7 @@ The report starts with data preprocessing and showing some summary statistics fo
 
 Age and sex differs in their average marathon performance - On average, men has a longer course time and both sex slows down. There is also impacts on environmental conditions - It was statistically significant that it differ by age, but not by sex. For weather parameters, solar Radiation, wet bulb temperature, and Flag Conditions (especially Red) have the largest positive impacts on time (i.e., largest negative impacts on performance). On the other hand, Solar Radiation (SR) and Dew Point (DP) has negative impact on time (i.e., positive impact on performance), so higher solar radiation and dew point could be a favorable condition for better performance.
 
-The full report can be found [here](/Project1/project1.pdf).
+The full report can be found [here](/project1.pdf).
 
 ## Files
 
