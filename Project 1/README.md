@@ -1,8 +1,8 @@
-# Exploring the Impact of Environment and Weather to Marathon Performance, by Age and Sex
+# Exploring the Impact of Environment and Weather Conditions on Marathon Performance
 
 ## Background
 
-Previous studies shown negative associations on endurance exercise performance and environmental temperature[1], which magnify during long distance events if temperature is warm [2]. It was also shown that the older population were less able to dissipate heat [3], and there are sex differences [4].
+Previous studies have shown negative associations on endurance exercise performance and environmental temperature[1], which magnify during long distance events if temperature is warm [2]. It was also shown that the older population are less able to dissipate heat [3], and there are also sex differences [4].
 
 ## Methods
 
@@ -10,19 +10,23 @@ This project aims to explore different environmental factors that impact maratho
 
 ## Data
 
-The project1 data set contains info and results for each participant (14-85 years) in the marathon races at Boston, New York City, Chicago, Twin Cities, and Grandmas from 1993 to 2016. It also includes weather parameters, such as dry and wet bulb temperature, relative humidity, black globe temperature and more. This results data already includes calculated variables WBGT (Wet Bulb Globe Temperature, calculated by the three temperature) and Flag (Groups for WBGT). The project also utilized the course_record data that included the record for each race, at each year. To further assess the environmental impact, AQI data was obtained using provided code in class, which grabbed data from an API using the R package RAQSAPI.
+The `project1` data set contains info and results for 11564 participants (14-85 years) in the marathon races at Boston, New York City, Chicago, Twin Cities, and Grandmas from 1993 to 2016. It also includes 10 weather parameters, such as dry and wet bulb temperature, relative humidity, black globe temperature and more. This includes the calculated variables `WBGT` (Wet Bulb Globe Temperature, calculated by the three temperatures) and `Flag` (Groups for WBGT). The project also utilized the `course_record` data that included the course record for each gender at each race and year. To further assess the environmental impact, AQI data was obtained using the R package RAQSAPI, grabbing data from the US Environmental Protection Agency's API.
 
 ## Methods
 
-This report starts with data preprocessing and showing some summary statistics for the data sets. To start the exploratory, I first examined the age and sex effects on marathon performance. Air quality information for PM2.5 and Ozone level was then factored in. Lastly, weather parameters are investigated and a discussion on the results is included. All exploration was presented through plots, tables, and regression models.
+The report starts with data preprocessing and showing some summary statistics for the data sets. To start the exploratory, the age and sex effects on marathon performance were first examined. Air quality information for PM2.5 and Ozone level was then factored in. Last, weather parameters are investigated and a discussion on the results is included. All exploration was presented through plots, tables, and regression models.
 
 ## Results
 
-Age and sex differs in their average marathon performance - On average, men has a longer course time and both sex slows down. There is also impacts on environmental conditions - It was statistically significant that it differ by age, but not by sex. For weather parameters, wet bulb temperature and Flag Conditions (especially Red) have the largest positive impacts on time (i.e., largest negative impacts on performance). This means the hotter and more humid condition are associated with worse performance. On the other hand, Dew Point (DP) has negative impact on time (i.e., positive impact on performace), so higher dew point could be a favorable condition for better performance.
+Age and sex differs in their average marathon performance - On average, men has a longer course time and both sex slows down. There is also impacts on environmental conditions - It was statistically significant that it differ by age, but not by sex. For weather parameters, solar Radiation, wet bulb temperature, and Flag Conditions (especially Red) have the largest positive impacts on time (i.e., largest negative impacts on performance). On the other hand, Solar Radiation (SR) and Dew Point (DP) has negative impact on time (i.e., positive impact on performance), so higher solar radiation and dew point could be a favorable condition for better performance.
 
-The full report can be found [here](/Project 1/project1.pdf).
+The full report can be found [here](/project1.pdf).
 
 ## Files
+
+### R
+
+`aqi.R`: The R code used to obtain Air Quality Info from the US Environmental Protection Agency's API (Code provided in class).
 
 ### Report
 
