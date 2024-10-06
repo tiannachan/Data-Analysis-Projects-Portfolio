@@ -20,7 +20,7 @@ This report starts with data preprocessing and showing some summary statistics f
 
 Age and sex differs in their average marathon performance - On average, men has a longer course time and both sex slows down. There is also impacts on environmental conditions - It was statistically significant that it differ by age, but not by sex. For weather parameters, wet bulb temperature and Flag Conditions (especially Red) have the largest positive impacts on time (i.e., largest negative impacts on performance). This means the hotter and more humid condition are associated with worse performance. On the other hand, Dew Point (DP) has negative impact on time (i.e., positive impact on performace), so higher dew point could be a favorable condition for better performance.
 
-The full report can be found [here](/project1.pdf).
+The full report can be found [here](/Project 1/project1.pdf).
 
 ## Files
 
