@@ -1,6 +1,6 @@
 # Exploring the Impact of Environment and Weather Conditions on Marathon Performance
 
-[Report PDF](/project1.pdf).
+[Report PDF](/project1.pdf)
 
 ## Background
 
