@@ -44,7 +44,7 @@ Previous studies have shown negative associations on endurance exercise performa
 
 This project aims to explore different environmental factors that impact marathon performance between gender and across age. This includes not only temperature, but humidity, solar radiation, wind, and air quality on a race date. Understanding the associations provides a more holistic comprehension on how environmental conditions influence performance in endurance events such as marathon. It could also be beneficial for athletes or coaches in forming their targeted strategies based on their own characteristics or weather.
 
-The report starts with data preprocessing and showing some summary statistics for the data sets. To start the exploratory, I first examined the age and sex effects on marathon performance. Air quality information for PM2.5 and Ozone level was then factored in. Lastly, weather parameters are investigated and a discussion on the results is included. All exploration was presented through plots, tables, and regression models.
+The report starts with data preprocessing and showing some summary statistics for the data sets. To start the exploratory, the age and sex effects on marathon performance was first examined. Air quality information for PM2.5 and Ozone level was then factored in. Lastly, weather parameters are investigated and a discussion on the results is included. All exploration was presented through plots, tables, and regression models.
 
 ## The Data and Data Preprocessing
 
@@ -69,7 +69,7 @@ Using `str()`, the variable type for each column in the data set could be displa
 
 ## Project 1 Data
 
-## Project 1 - Data Quality
+# Project 1 - Data Quality
 # str(project1)
 
 # Project 1 - Rename column names
@@ -93,7 +93,8 @@ project1 <- project1 %>%
          as.factor))
 
 # Project 1 - Set white flag as reference
-project1$Flag <- factor(project1$Flag, levels = c("White", "Green", "Yellow", "Red")) 
+project1$Flag <- factor(project1$Flag, levels = c("White", "Green", "Yellow", "Red"))
+
 ```
 
 ```{r, fig.height=3.2}
@@ -118,11 +119,11 @@ project1 %>% group_by(Race, Year) %>%
             n_Total = n()) %>%
   filter(n_Miss > 0) %>%
   kable(digits = 2, caption = "Missing Data from Project 1 Data",
-        col.names = c("Race", "Year", "Missing", "Total"))
+        col.names = c("**Race**", "**Year**", "**Missing**", "**Total**"))
   
 ```
 
-### Air Quality Data 
+### Air Quality Data
 
 To further assess the environmental impact, AQI data was obtained using the R package RAQSAPI, grabbing data from the US Environmental Protection Agency's API. The code was provided in class and available at `aqi.R`. The resulted data set includes the arithmetic mean values for ozone level in parts per million, and the PM2.5 in Micrograms/cubic meter (LC).
 
@@ -139,18 +140,19 @@ aqi_values %>% select(c(sample_duration, aqi)) %>%
   summarise(n_Miss = sum(is.na(aqi)),
             n_Total = n()) %>%
   kable(digits = 2, caption = "Missing Data from AQI Values",
-        col.names = c("Sample Duration", "Missing", "Total"))
+        col.names = c("**Sample Duration**", "**Missing**", "**Total**"))
 ```
 
 The summary table below (**Table 3**) uncover the complexity of this data set, showing the breakdown of information gathered on the data. Upon further review of the data, it was observed that the entries had different coding for marathon races, and it includes the full date for each race. Therefore, the marathon races were recoded to facilitate the merging of the data later, and the function `year()` was used to obtain the year only.
 
 ```{r}
+
 # TABLE 3: AQI Data - Data Quality
 aqi_values %>% 
   group_by(parameter_code, units_of_measure, sample_duration) %>% 
   summarise(n=n()) %>% 
   kable(caption = "AQI Data Summary",
-        col.names = c("Parameter Code", "Units of Measure", "Sample Duration", "n"))
+        col.names = c("**Parameter Code**", "**Units of Measure**", "**Sample Duration**", "**n**"))
 
 # AQI Data - Change marathon names and add year column
 aqi_values_adj <- aqi_values %>%
@@ -226,6 +228,7 @@ a + b
 The project also utilized the `course_record` data that included the course record for each gender at each race and year. No missingness was found in the data.
 
 ```{r}
+
 ## Course Record
 # Course Record - Missing data plot
 # vis_miss(course_record)
@@ -251,6 +254,7 @@ project1_CR$Time <- (project1_CR$CR * (1+project1_CR$`%CR`/100))/3600 %>%
 # Merge project 1 + course record with AQI data
 project1_CR_aqi <- project1_CR %>%
   left_join(aqi_summary_by_year, by = c("Race", "Year"))
+
 ```
 
 ```{r, fig.height=2.5}
@@ -271,6 +275,8 @@ corrplot(M, method = 'color', tl.cex = 0.7)
 
 ```{r, fig.height=2.5}
 #| fig-cap: Course Time vs Age by Sex
+
+
 ###### AIM 1 ######
 
 # FIGURE 4: Age vs Time plot
@@ -288,6 +294,7 @@ ggplot(project1_CR_aqi, aes(x = Age, y = Time)) +
 This table shows the summary statistics for age and course time for men and women. It is obvious that men (N = 6,112) had a larger sample size than women (N = 5,452). In average, the men population is also older than the female population. We again see that men have a shorter course time on average.
 
 ```{r}
+
 # TABLE 4: Age & Time Summary by Sex
 project1_CR_aqi %>% dplyr::select(Age, Sex, Time)%>%
   tbl_summary(by = Sex, 
@@ -296,7 +303,7 @@ project1_CR_aqi %>% dplyr::select(Age, Sex, Time)%>%
   as_kable_extra(booktabs = TRUE, 
                  caption = "Age and Time Summary by Sex",
                  longtable = TRUE, linesep = "") %>%
-  kableExtra::kable_styling(font_size = 10, 
+  kableExtra::kable_styling(font_size = 11, 
                            latex_options = c("repeat_header", "HOLD_position"))
 ```
 
@@ -319,7 +326,7 @@ summary <- summary(model)
 coefficients <- as.data.frame(summary$coefficients)
 kable(coefficients, digits = 3,
       caption = "Linear Regression Model Summary",
-      col.names = c("Variable", "Estimate", "Std. Error", "t value", "Significance"))
+      col.names = c("**Variable**", "**Estimate**", "**Std. Error**", "**t value**", "**Significance**"))
 ```
 
 Therefore, for each unit increase in Age, the expected Time increases by $\beta_1 = 0.039$ hours, holding all other variables constant. For **Male** (SexM = 1), the expected Time decreases by $\beta_2 =-0.491$ hours compared to females, holding all other variables constant.
@@ -332,7 +339,8 @@ Same process for Ozone measurements, the slope plotted with `geom_smooth` shows 
 
 ```{r, fig.height=2.5}
 #| fig-cap: Average PM2.5/ Ozone vs. Average Course Time, by Race
-#| 
+
+
 ###### AIM 2 ######
 
 # Create summary data by race & year
@@ -359,6 +367,7 @@ b <- ggplot(new_data, aes(x = Avg_Time, y = Ozone)) +
         panel.grid.minor = element_blank())
 
 a + b 
+
 ```
 
 In order to see the differences between sex, another aggregation by sex was created (See **Figure 6**). There was a clear distinction between male and female - again, male has a shorter average time than female in overall.
@@ -392,7 +401,7 @@ b <- ggplot(new_data, aes(x = Avg_Time, y = Ozone)) +
 a + b
 ```
 
-To quantify the impact of environmental conditions on marathon performance, I first focused on a regression model with only PM2.5 and Ozone: $E[\text{Time}] = \beta_0 + \beta_1 \text{PM2.5} + \beta_2 \text{Ozone}$.
+To quantify the impact of environmental conditions on marathon performance, let us first focus on a regression model with only PM2.5 and Ozone: $E[\text{Time}] = \beta_0 + \beta_1 \text{PM2.5} + \beta_2 \text{Ozone}$.
 
 ```{r}
 
@@ -404,7 +413,7 @@ summary <- summary(model)
 coefficients <- as.data.frame(summary$coefficients)
 kable(coefficients, digits = 3,
       caption = "Linear Regression Model Summary",
-      col.names = c("Variable", "Estimate", "Std. Error", "t value", "Significance"))
+      col.names = c("**Variable**", "**Estimate**", "**Std. Error**", "**t value**", "**Significance**"))
 ```
 
 Since both PM2.5 and Ozone are significant, both of them were able to explain course time.
@@ -413,7 +422,7 @@ $\beta_1 = 0.004$ means that for every one unit increase in PM2.5, the course ti
 
 $\beta_2 = -5.630$ means that for every one unit increase in Ozone, the course time decreases by -5.630 hours. Thus, by conversion, for every 0.01 unit increase in Ozone, the course time decreases by -0.0563 hours (3.378 minutes).
 
-To find out whether the impact differs across age and gender, I added the main effects of age and gender, along with the two-way interactions of them with each environmental measure. Then, I used backward selection and the results are as follows. This method drops one variable each time and test for the significance.
+To find out whether the impact differs across age and gender, the main effects of age and gender was added along with the two-way interactions of them with each environmental measure. Then, backward selection was used and the results are as follows. This method drops one variable each time and test for the significance.
 
 The full model: $E[\text{Time}] = \beta_0 + \beta_1 \text{Age} + \beta_2 \text{SexM} + \beta_3 \text{PM2.5} + \beta_4 \text{Ozone}+ \beta_5 (\text{Age} \times \text{PM2.5}) + \beta_6 (\text{Age} \times \text{Ozone}) + \beta_7 (\text{SexM} \times \text{PM2.5}) + \beta_8 (\text{SexM} \times \text{Ozone})$
 
@@ -440,7 +449,7 @@ coefficients <- as.data.frame(summary$coefficients)
 ```{r}
 kable(coefficients, digits = 4,
       caption = "Linear Regression Model Summary",
-      col.names = c("Variable", "Estimate", "Std. Error", "t value", "Significance"))
+      col.names = c("**Variable**", "**Estimate**", "**Std. Error**", "**t value**", "**Significance**"))
 ```
 
 Since the interaction term for Sex \* Ozone was removed, this suggests that the relationship between Ozone and Time does not differ significantly between males and females in the data set. The interaction term for Sex \* PM2.5 was not removed by backward selection, but it remained insignificant (p = 0.078). We cannot conclude that the impact of PM2.5 on course time changes as Sex group changes. The others were significant means that the impact of PM2.5 and ozone on course time changes as Age increases. In overall, the impact for these environmental factors were seemingly more significant to age differences, but not that much for different sexes. We also see an apparent reversal in the effects of PM2.5 and ozone, but they could be attributed to the inclusion of the interaction terms.
@@ -451,6 +460,7 @@ The graph below illustrates the relationship of WBGT, flag, and the marathon per
 
 ```{r, fig.height=2.5}
 #| fig-cap: Impact of WBGT on Marathon Performance
+
 
 ###### AIM 3 ######
 
@@ -472,6 +482,7 @@ ggplot(new_data, aes(x = Avg_Time, y = WBGT)) +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank()) +
   theme_minimal()
+
 ```
 
 Course time was regressed with the full model- all the participant characteristics and weather variables in the data set. Then, backward selection was used to find the smallest best model. **Table 8** below shows the coefficients of the final model by backward selection. This is the final model: $$
@@ -493,13 +504,13 @@ summary <- summary(final_model)
 
 # TABLE 8: Print results
 coefficients <- as.data.frame(summary$coefficients)
+
 ```
 
 ```{r}
 kable(coefficients, digits = 4,
       caption = "Linear Regression Model Summary: Backward Selection",
-      col.names = c("Variable", "Estimate", "Std. Error", "t value", "Significance"))
-
+      col.names = c("**Variable**", "**Estimate**", "**Std. Error**", "**t value**", "**Significance**"))
 ```
 
 The significance for the flags verify what we have seen in the graph above. The Green Flag was not significant (p-value= 0.261), but the Yellow and Red were. This indicates that when the weather is under Green flag conditions, the runners' course time *do not* differ from those under White flag conditions. Under Yellow flag conditions, the runners have 0.115 hours (6.9 minutes) longer than those under White flag; and under Red flag conditions, the runners have 0.155 hours (9.3 minutes) longer than those under White flag.
@@ -520,7 +531,7 @@ On the other hand, **Solar Radiation (SR) and Dew Point (DP)** has negative impa
 
 This project explored the impact of environmental and weather conditions such as PM2.5, ozone levels, temperature, and humidity on marathon performance across different age group and genders. The findings revealed significant associations between some of these variables and race times, which varied by age but less so by sex.
 
-The data used in this analysis has a wide range of participants and races under different conditions. However, there are limitations that must be acknowledged. Specifically, the PM2.5 and Ozone levels were calculated by taking the average of all sample durations (e.g., 1-hour, 8-hour, and 24-hour measurements), which may not fully capture the variability of air quality experienced by participants throughout the marathon.
+The data used in this analysis has a wide range of participants and races under different conditions. However, there are limitations that must be acknowledged. Specifically, the PM2.5 and Ozone levels were calculated by taking the average of all sample duration (e.g., 1-hour, 8-hour, and 24-hour measurements), which may not fully capture the variability of air quality experienced by participants throughout the marathon.
 
 In conclusion, this analysis demonstrates that PM2.5, ozone levels, solar radiation, wet bulb temperature, red flag, and dew point were significantly associated with marathon performance. While ozone appeared to have an unexpected negative association with performance, it is possible that this reflects confounding factors there were not captured in this analysis.
 
