@@ -1,0 +1,93 @@
+---
+title: "Project 2: Regression Analysis"
+author: "Tianna Chan"
+date: "November 10, 2024"
+format: pdf
+include-in-header: 
+  text: |
+    \usepackage{fvextra}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+editor: visual
+execute:
+  echo: false
+  warning: false
+  error: false
+  eval: true
+  output: true
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+# Load libraries
+library(readr)
+library(tidyverse)
+set.seed(123456)
+library(knitr)
+library(tidyr)   
+library(dplyr)    
+library(kableExtra)
+library(visdat)
+library(gtsummary)
+library(patchwork)
+library(DataExplorer)
+```
+
+## Abstract
+
+This project explores
+
+## Introduction
+
+Previous studies have shown.
+
+## The Data and Data Preprocessing
+
+```{r}
+#| output: false
+
+# Import data sets
+aqi_values <- read_csv("aqi_values.csv")
+```
+
+```{r}
+
+###### DATA PREPROCESSING ######
+
+
+```
+
+```{r, fig.height=3.2}
+#| fig-cap: 
+
+# FIGURE 1: 
+```
+
+```{r}
+
+# Project 1 - Missing data plot
+# project1 %>% abbreviate_vars() %>% vis_miss()
+
+# TABLE 1: Project 1 - Missing data table
+project1 %>% group_by(Race, Year) %>%
+  summarize(n_Miss = sum(is.na(Flag)),
+            n_Total = n()) %>%
+  filter(n_Miss > 0) %>%
+  kable(digits = 2, caption = "Missing Data from Project 1 Data",
+        col.names = c("**Race**", "**Year**", "**Missing**", "**Total**"))
+  
+```
+
+## Discussion
+
+## References
+
+1.  
+
+\newpage
+
+# Code Appendix
+
+```{r ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
+```
