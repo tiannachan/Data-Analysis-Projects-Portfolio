@@ -41,7 +41,7 @@ The following packages were used in this analysis:
 -   Data Manipulation: `tidyverse`, `dplyr`, `readr`, `mice`, `caret`
 -   Table Formatting: `gtsummary`, `knitr`, `kableExtra`, `tidyr`
 -   Data Visualization: `visdat`, `ggplot2`, `DataExplorer`, `corrplot`, `gridExtra`
--   Regression Model and Evaluation: `stats`, `MASS`, `glmnet`, `car`, `pROC`, `predtools`,
+-   Regression Model and Evaluation: `stats`, `MASS`, `glmnet`, `car`, `pROC`, `predtools`
 
 ## References
 
