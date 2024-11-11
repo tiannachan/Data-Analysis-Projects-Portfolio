@@ -152,8 +152,8 @@ data_transformed <- data_transformed %>% select(-c(bdi_score_w00, cpd_ps, hedons
 data_numeric <- select_if(data_transformed,is.numeric) %>% na.omit()
 
 M = cor(data_numeric[,-1])
-corrplot(M, method = 'number', type = "lower", diag = FALSE,
-         number.cex = 0.5, 
+corrplot(M, method = 'number', type = "lower", #diag = FALSE,
+         number.cex = 0.5, cl.cex = 0.5, 
          tl.cex = 0.5, tl.col = "black", tl.srt = 20)
 ```
 
