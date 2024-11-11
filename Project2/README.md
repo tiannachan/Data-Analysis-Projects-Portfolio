@@ -1,6 +1,6 @@
 # Moderators and Predictors Analysis for Smoking Abstinence with Behavioral Treatment And Pharmacotherapy
 
-[Report PDF](Project2/project2.pdf)
+[Report PDF](project2.pdf)
 
 ## Background
 
@@ -24,7 +24,7 @@ Moderator analysis found that menthol cigarette use negatively moderated the eff
 
 The reduced effectiveness of behavioral activation among menthol users highlights a need for targeted behavioral activation treatment for exclusive menthol smokers. Key predictors of abstinence shows the importance of biological, psychological, and behavioral factors in intervention design. These findings suggests that a tailored behavioral treatment for MDD smokers could be beneficial in improving smoking cessation success.
 
-The full report can be found [here](Project2/project2.pdf).
+The full report can be found [here](project2.pdf).
 
 ## Files
 
