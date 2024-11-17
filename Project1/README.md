@@ -4,11 +4,13 @@
 
 ## Background
 
-Previous studies have shown negative associations on endurance exercise performance and environmental temperature[1], which magnify during long distance events if temperature is warm [2]. It was also shown that the older population are less able to dissipate heat [3], and there are also sex differences [4].
+Previous studies have shown aerobic performance declines even under just modest hyperthermia in hot environments [1]. Specifically, in marathon running, higher temperatures are associated with slower race times [2]. Additionally, older adults may struggle more in hot and humid conditions due to a reduced ability to dissipate heat effectively [3]. Sex differences in endurance running have also been observed, with male and female exhibiting distinct physiological and thermoregulatory responses under environmental conditions [4].
 
 ## Methods
 
 This project aims to explore different environmental factors that impact marathon performance between gender and across age. This includes not only temperature, but humidity, solar radiation, wind, and air quality on a race date. Understanding the associations provides a more holistic comprehension on how environmental conditions influence performance in endurance events such as marathon. It could also be beneficial for athletes or coaches in forming their targeted strategies based on their own characteristics or weather.
+
+We will start with data preprocessing and begin the exploratory, by first examining the age and sex effects on marathon performance. Then, we will factor in the air quality information for PM2.5 and Ozone level. Lastly, weather parameters will be investigated and a discussion on the results is included. All explorations will be presented through plots, tables, and regression models.
 
 ## Data
 
@@ -20,7 +22,7 @@ The report starts with data preprocessing and showing some summary statistics fo
 
 ## Results
 
-Age and sex differs in their average marathon performance - On average, men has a longer course time and both sex slows down. There is also impacts on environmental conditions - It was statistically significant that it differ by age, but not by sex. For weather parameters, solar Radiation, wet bulb temperature, and Flag Conditions (especially Red) have the largest positive impacts on time (i.e., largest negative impacts on performance). On the other hand, Solar Radiation (SR) and Dew Point (DP) has negative impact on time (i.e., positive impact on performance), so higher solar radiation and dew point could be a favorable condition for better performance.
+Results reveals significant differences based on gender and age, which also applies to air quality impacts in the measures of PM2.5 and ozone levels. Additionally, relative humidity and wet bulb globe temperature are the most influential weather factors affecting performance, with effects vary by age. These findings offer valuable insights for athletes and coaches to optimize race-day strategies based on environmental conditions and individual characteristics.
 
 The full report can be found [here](project1.pdf).
 
