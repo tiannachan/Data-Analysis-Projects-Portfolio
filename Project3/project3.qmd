@@ -1,0 +1,86 @@
+---
+title: "Project 3"
+author: "Tianna Chan"
+date: "December 5, 2024"
+format: pdf
+include-in-header: 
+  text: |
+    \usepackage{fvextra}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+editor: visual
+execute:
+  echo: false
+  warning: false
+  error: false
+  eval: true
+  output: true
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+# Load libraries
+library(readr)
+library(tidyverse)
+set.seed(123456)
+library(knitr)
+library(tidyr)   
+library(dplyr)    
+library(kableExtra)
+library(visdat)
+library(gtsummary)
+library(corrplot)
+library(mice)
+library(car)
+library(glmnet) # For lasso
+library(pROC) # For ROC
+library(predtools) # For calibration plots
+library(caret) # For stratified sampling
+library(gridExtra) # For grid arrange
+library(naniar) # For miss var summary
+
+th <- theme(plot.title = element_text(size = 9),       
+            axis.title.x = element_text(size = 8),                
+            axis.title.y = element_text(size = 8),               
+            axis.text.x = element_text(size = 8),               
+            axis.text.y = element_text(size = 8),  
+            legend.position = "bottom",
+            legend.justification = "center",
+            legend.box = "horizontal",
+            legend.title = element_text(size = 6),              
+            legend.text = element_text(size = 6),
+            legend.key.size = unit(0.3, 'cm')
+            )
+```
+
+## Abstract
+
+**Background:**
+
+**Methods:**
+
+**Results:**
+
+**Conclusion:**
+
+## Introduction
+
+## Methods
+
+## Results
+
+## Discussion
+
+## Conclusions
+
+\newpage
+
+## References
+
+\newpage
+
+# Code Appendix
+
+```{r ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
+```
