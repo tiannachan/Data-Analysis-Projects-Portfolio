@@ -8,19 +8,19 @@ Smoking cessation is particularly challenging for individuals with major depress
 
 ## Methods
 
-Data were processed with transformations for normality and multiple imputation for missing values. To explore baseline moderators of behavior treatment effects on abstinence, logistic regression models were fitted on each imputed dataset, and consistent predictors across imputations were identified. Lasso regression was also applied for robust variable selection across imputed datasets, focusing on main effects and treatment interactions. Key predictors were identified based on the Lasso variable selection.
+Data were processed with transformations for normality and multiple imputation for missing values. To explore baseline moderators of behavior treatment effects on abstinence, lasso models focusing on main effects and treatment interactions were fitted on each imputed dataset for robust variable selection across imputed datasets. The fitted models were pooled to a final model with key predictors identified. Model results are compared between the data with and withour transformation.
 
 ## Data
 
-The data consists of 300 participants, with their characteristics at baseline, treatment group, and the end-of-treatment (EOT) smoking abstinence. Preprocessing, transformation, and more cleaning was performed in the analysis. The data contains demographic factors such as age, sex, race, and socioeconomic indicators like income and education. Additionally, clinical and behavioral factors are accounted for, including baseline nicotine dependence, depression symptoms, smoking habits, and reward valuation associated with smoking. Indicators of prior diagnoses of major depressive disorder (MDD), antidepressant medication use, and readiness to quit smoking are also included to provide a comprehensive view of psychological and behavioral readiness. The data also included biological markers such as nicotine metabolism ratio (NMR) and preference for menthol cigarettes help capture individual differences that may impact treatment outcomes.
+The data consists of 300 participants, with their characteristics at baseline, treatment group, and the end-of-treatment (EOT) smoking abstinence from the Hitsman study. The study took place in research clinics at two urban universities in the United States. The baseline characteristics includes demographic factors such as age, sex, race, and socioeconomic indicators like income and education. Additional clinical and behavioral factors are also accounted, including baseline nicotine dependence, depression symptoms, smoking habits, and reward valuation associated with smoking. Indicators of prior diagnoses of major depressive disorder (MDD), antidepressant medication use, and readiness to quit smoking are also included to provide a comprehensive view of psychological and behavioral readiness. The data also included biological markers such as nicotine metabolism ratio (NMR) and preference for exclusively menthol cigarettes help capture individual differences that may impact treatment outcomes.
 
 ## Methods
 
-The reduced effectiveness of behavioral activation among menthol users highlights a need for targeted behavioral activation treatment for exclusive menthol smokers. Key predictors of abstinence, including Nicotine Metabolism Ratio, the interaction between Varenicline and antidepressant use, FTCD score, and its interaction with Behavioral Activation, shows the importance of biological, psychological, and behavioral factors in intervention design. These findings suggests that a tailored behavioral treatment for MDD smokers could be beneficial in improving smoking cessation success.
+Data were processed with transformations for normality and multiple imputation for missing values. To explore baseline moderators of behavior treatment effects on abstinence, lasso models focusing on main effects and treatment interactions were fitted on each imputed dataset for robust variable selection across imputed datasets. The fitted models were pooled to a final model with key predictors identified. Model results are compared between transformed and not transformed data.
 
 ## Results
 
-Moderator analysis found that menthol cigarette use negatively moderated the effectiveness of behavioral activation. Predictor analysis showed that the Nicotine Metabolism Ratio, interaction between Varenicline and Antidepressant Medication Use, FTCD Score, and its interaction between Behavioral Activation (BA) are strong predictors that meaningfully influence smoking abstinence outcomes in individuals with MDD.
+Exclusively menthol cigarette use negatively moderated the effectiveness of behavioral activation. FTCD Score, interaction between Varenicline and NMR, being Non-Hispanic White, and the interaction between Varenicline and Age are the strongest predictors that meaningfully influence smoking abstinence outcomes in individuals with MDD.
 
 The reduced effectiveness of behavioral activation among menthol users highlights a need for targeted behavioral activation treatment for exclusive menthol smokers. Key predictors of abstinence shows the importance of biological, psychological, and behavioral factors in intervention design. These findings suggests that a tailored behavioral treatment for MDD smokers could be beneficial in improving smoking cessation success.
 
@@ -40,7 +40,7 @@ The following packages were used in this analysis:
 
 -   Data Manipulation: `tidyverse`, `dplyr`, `readr`, `mice`, `caret`
 -   Table Formatting: `gtsummary`, `knitr`, `kableExtra`, `tidyr`
--   Data Visualization: `visdat`, `ggplot2`, `DataExplorer`, `corrplot`, `gridExtra`
+-   Data Visualization: `visdat`, `naniar`, `ggplot2`, `corrplot`, `gridExtra`
 -   Regression Model and Evaluation: `stats`, `MASS`, `glmnet`, `car`, `pROC`, `predtools`
 
 ## References
