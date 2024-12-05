@@ -183,6 +183,7 @@ param_grid$n_clusters <- rep(designs_2_1$n_clusters, each = nrow(designs_2_1))
 param_grid$R_per_cluster <- rep(designs_2_1$R_per_cluster, each = nrow(designs_2_1))
 
 
+# Simulation Outputs ----------------------------------------------------------
 #### Part 1
 ### Simulate normal, varied parameters
 normal_varied_parameter <- run_simulations(param_grid, alpha, "normal", n_replications, ratio = FALSE)
