@@ -1,7 +1,3 @@
----
----
----
-
 # Optimal Experimental Design under Budget Constraints: Applications to Normal and Poisson Distributed Data
 
 [Report PDF](project3.pdf)
