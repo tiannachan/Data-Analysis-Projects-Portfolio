@@ -19,7 +19,7 @@ sigma2_values <- c(1, 10)    # Low/high within-cluster variance
 c1 <- 20           # Default cost of first sample in a cluster
 c2 <- 10           # Default cost of additional samples
 budget <- 2000     # Total budget
-n_replications <- 100      # Number of replications for simulations
+n_replications <- 500      # Number of replications for simulations
 
 # Functions ------------------------------------------------------------
 
@@ -136,6 +136,10 @@ run_simulations <- function(grid, alpha, distribution, n_replications, ratio = T
     if (ratio == TRUE){
       results[[i]] <- results[[i]] %>% mutate(ratio = params$ratio) 
     }
+    
+    if (distribution == "poisson"){
+      results[[i]] <- results[[i]] %>% mutate(sigma2 = NA) 
+    }
   }
   
   bind_rows(results)
@@ -182,6 +186,9 @@ param_grid <- do.call(rbind,
 param_grid$n_clusters <- rep(designs_2_1$n_clusters, each = nrow(designs_2_1))
 param_grid$R_per_cluster <- rep(designs_2_1$R_per_cluster, each = nrow(designs_2_1))
 
+# Without varying sigma
+param_grid_no_sigma <- param_grid %>% mutate(sigma2 = NA) %>% unique()
+
 
 # Simulation Outputs ----------------------------------------------------------
 #### Part 1
@@ -196,7 +203,7 @@ write.csv(normal_varied_cost, "outputs/normal_varied_cost.csv", row.names = FALS
 
 #### Part 3
 ### Simulate poisson, varied parameters
-poisson_varied_parameter <- run_simulations(param_grid, alpha, "poisson", n_replications, ratio = FALSE)
+poisson_varied_parameter <- run_simulations(param_grid_no_sigma, alpha, "poisson", n_replications, ratio = FALSE)
 write.csv(poisson_varied_parameter, "outputs/poisson_varied_parameter.csv", row.names = FALSE)
 
 ### Simulate poisson, varied cost ratios
