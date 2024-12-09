@@ -22,6 +22,12 @@ We designed a simulation study using the ADEMP framework as follows. Please read
 -   Part 2 (Varying Cost Ratio - Normal Distribution)
 -   Part 3 (Extension to Poisson Model)
 
+**Performance measures:** 
+-   Absolute Bias: $|E[\hat{\beta}_{\alpha}] - \beta_1|$; 
+-   Variance: $Var[\hat{\beta}_{\alpha}]$; 
+-   MSE: $Abs.Bias^2 + Variance$; 
+-   Coverage: The proportion of simulations where the true $\beta_1$ lies within the confidence interval for $\hat{\beta}_{\alpha}$.
+
 ## Data
 
 Below shows the head of the simulated data. All simulated data for the varying parameters parts of the project follows the same structure. Additional column for the cost ratio information is included in the varying cost ratio data. With 500 iterations each combination, there are 18,000 and 9,000 observations simulated for the varying parameters data in Normal and Poisson distribution respectively. 3500 observations were simulated for the cost ratio sections.
